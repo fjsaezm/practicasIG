@@ -13,6 +13,8 @@
 #include "MallaPLY.hpp"
 #include "MallaRevol.hpp"
 
+
+
 using namespace std ;
 
 static unsigned objetoActivo2 = 0 ; // objeto activo: malla ply (0), malla revol (1)
@@ -24,13 +26,10 @@ static Objeto3D * objetos2[numObjetos2] = { nullptr, nullptr };
 // Función para implementar en la práctica 1 para inicialización.
 // Se llama una vez al inicio, cuando ya se ha creado la ventana e
 // incializado OpenGL.
-
 void P2_Inicializar(  )
 {
    cout << "Creando objetos de la práctica 2 .... " << flush ;
-   // COMPLETAR: práctica 2: inicializar objeto de revolución y objeto PLY (en 'objeto2')
-   // ...
-
+   objetos2[0] = new MallaPLY("../plys/beethoven.ply");
    cout << "hecho." << endl << flush ;
 }
 
@@ -67,5 +66,5 @@ void P2_DibujarObjetos( ContextoVis & cv )
 {
    // COMPLETAR: práctica 2: invocar a 'visualizarGL' para el objeto activo actual en 'objetos2'
    // ...
-
+  objetos2[objetoActivo2]->visualizarGL(cv);
 }
