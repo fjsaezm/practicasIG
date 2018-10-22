@@ -17,23 +17,62 @@
 
 class MallaRevol : public MallaInd
 {
-   private:
+private:
 
-   unsigned
-      nper , // numero de perfiles
-      nvp  ; // numero de vertices por perfil
+  unsigned
+  nper , // numero de perfiles
+    nvp  ; // numero de vertices por perfil
 
-   public:
-      // crea una malla de revolucion
-      MallaRevol( const std::string & nombre_arch,
-                  const unsigned nperfiles,
-                  const bool     crear_tapas,
-                  const bool     cerrar_malla ) ;
+public:
+  // crea una malla de revolucion
+  MallaRevol();
 
-     void crearMallaRevol( const std::vector<Tupla3f> & perfil_original,
-                           const unsigned nperfiles,
-                           const bool crear_tapas,
-                           const bool cerrar_malla ) ;
+  MallaRevol( const std::string & nombre_arch,
+              const unsigned nperfiles,
+              const bool     crear_tapas,
+              const bool     cerrar_malla ) ;
+
+  void inicializarMallaRevol(std::vector<Tupla3f> & perfil_original,
+                             unsigned nPerfiles,
+                             unsigned numVertPerfil,
+                             bool crearTapas,
+                             bool cerrarMalla );
+
+  void crearMallaRevol( const std::vector<Tupla3f> & perfil_original,
+                        const unsigned nperfiles,
+                        const bool crear_tapas,
+                        const bool cerrar_malla ) ;
+
+
 } ;
+
+// Clases cilindro, cono, Esfera
+
+class Cilindro : public MallaRevol
+{
+protected:
+  float radio;
+  float altura;
+
+public:
+  Cilindro(unsigned numVertPerfil, unsigned nPerfiles, float r, float a, bool crearTapas, bool cerrarMalla);
+};
+
+class Cono : public MallaRevol
+{
+protected:
+  float radio;
+  float altura;
+public:
+  Cono(unsigned numVertPerfil, unsigned nPerfiles, float r, float a, bool crearTapas, bool cerrarMalla);
+};
+
+class Esfera : public MallaRevol
+{
+protected:
+  float radio;
+public:
+  Esfera( unsigned numVertPerfil, unsigned nPerfiles, float r, bool crearTapas, bool cerrarMalla);
+};
 
 #endif
