@@ -22,7 +22,9 @@ MallaRevol::MallaRevol() : MallaInd() {}
 
 void MallaRevol::crearMallaRevol( const std::vector<Tupla3f> & perfil_original, const unsigned nperfiles, const bool crear_tapas, const bool cerrar_malla) {
 
-  double ang = cerrar_malla ? 360.0 / (double) nperfiles : 360.0 / (double) nperfiles - 1;
+  int nper = cerrar_malla ? nperfiles : nperfiles-1 ;
+  double ang = 360.0 / (nper);
+  nvp = perfil_original.size();
 
   //Matriz de giro de ángulo ang.
   Matriz4f giro = MAT_Rotacion(ang, 0, 1, 0);
@@ -32,69 +34,60 @@ void MallaRevol::crearMallaRevol( const std::vector<Tupla3f> & perfil_original, 
   vertices.insert(vertices.end(), aux.begin(),aux.end());
   unsigned i,j;
 
-  for( i = 0; i < nperfiles - 1; i++){
+  // Inicializacion de los vertices
+  for (int i = 0; i < nperfiles; i++)
+    for ( unsigned j = 0; j < nvp; j++)
+      {
+        Matriz4f matriz_giro = MAT_Rotacion((float)i*ang, 0 , 1 , 0);
+        vertices.push_back(matriz_giro*perfil_original[j]);
+      }
+  //Add faces
+  for ( int i = 0; i < nperfiles - 1; i++)
+    for ( unsigned j = 0; j < nvp-1; j++)
+      {
+        caras.push_back({ i*nvp + j, (i+1)*nvp+j+1 , (i+1)*nvp+j});
+        caras.push_back({ i*nvp + j, i*nvp + j+1, (i+1)*nvp + j+1});
+      }
 
-    vector<Tupla3f> rotado;
-    //Rotate and save in a 2nd auxiliar vector
-    for(auto vert : aux)
-      rotado.push_back(giro * vert);
-    //Add verts to the MAIN vector
-    vertices.insert(vertices.end(), rotado.begin(), rotado.end());
-    //The auxiliar vector is the rotated one, so we want to rotate the rotated
-    aux = rotado;
+  if (cerrar_malla){
+     for (unsigned j = 0; j < nvp-1; j++)
+       {
+         caras.push_back({ (nper - 1)*nvp + j, j+1, j});
+         caras.push_back ({ (nper - 1)*nvp + j, (nper - 1)*nvp + j+1, j+1});
+       }
+   }
+   // Crear tapas
+   if (crear_tapas){
 
-    // Add faces
-    for (j = 0; j < nvp - 1; j++) {
-      int k1 = i * nvp + j;
-      int k2 = i * nvp + j + 1;
-      int k3 = (i+1) * nvp + j + 1;
-      int k4 = (i+1) * nvp + j;
+     std::cout << "Crear tapas." << endl;
 
-      caras.push_back({k4, k2, k3});
-      caras.push_back({k4, k1, k2});
-    }
-  }
+     vertices.push_back({0, perfil_original[0][1], 0});
+     vertices.push_back({0, perfil_original[nvp-1][1], 0});
 
 
-   if (cerrar_malla) {
-    // Añadir caras (i = nper - 1)
-    for (j = 0; j < nvp - 1; j++) {
-      int k1 = i * nvp + j;
-      int k2 = i * nvp + j + 1;
-      int k3 = j + 1; // ((i+1) % nper) * nvp + j + 1
-      int k4 = j; // ((i+1) % nper) * nvp + j
+     std::cout << "Creados vertices de tapas: " << vertices[vertices.size()-2] << " y " << vertices[vertices.size()-1]<< endl;
 
-      caras.push_back({k4, k2, k3});
-      caras.push_back({k4, k1, k2});
-    }
-  }
+     // Se crean las caras de las tapas.
+     for (int i = 0 ; i < nperfiles - 1; i++ )
+       {
+         caras.push_back( {i*nvp, vertices.size()-2, (i+1)*nvp} );
+         caras.push_back( {(i+1)*nvp - 1, vertices.size()-1, (i+2)*nvp -1} );
+       }
 
-  // Crear tapas
-  if (crear_tapas) {
+     // Si se ha cerrado la malla hay caras adicionales.
+     if (cerrar_malla)
+       {
+       caras.push_back ( { nvp*(nper - 1), vertices.size()-2 , 0 } );
+       caras.push_back ( { nvp*(nper - 1) + nvp - 1, vertices.size()-1, nvp - 1});
+       }
+   }
 
-    // Cara inferior
-    auto primer_ver = vertices[0];
-    if (primer_ver(X) != 0) {
-      vertices.push_back({0.0, primer_ver(Y), 0.0});
-      tam_ver++;
+   tam_ver = vertices.size();
+   tam_tri = caras.size();
 
-      for (i = 0; i + nvp < tam_ver; i += nvp)
-        caras.push_back({i, tam_ver - 1, (i + nvp) % (tam_ver - 1)});
-    }
 
-    // Cara superior
-    auto ult_ver = vertices[tam_ver - 2];
-    if (ult_ver(X) != 0) {
-      vertices.push_back({0.0, ult_ver(Y), 0.0});
-      tam_ver++;
 
-      for (i = nvp - 1; i + nvp < tam_ver; i += nvp)
-        caras.push_back({i, tam_ver - 1, i + nvp});
-
-      // Última cara (i = nper * nvp - 1)
-      caras.push_back({i, tam_ver - 1, nvp - 1});
-    }
-  }
+ 
 
 }
 
@@ -143,7 +136,6 @@ MallaRevol::MallaRevol( const std::string & nombre_arch,
 }
 
 // *****************************************************************************
-
 
 
 Cilindro::Cilindro(unsigned numVertPerfil, unsigned nPerfiles, float r, float a, bool crearTapas, bool cerrarMalla)
