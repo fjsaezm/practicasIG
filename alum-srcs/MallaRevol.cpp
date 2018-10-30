@@ -22,79 +22,61 @@ MallaRevol::MallaRevol() : MallaInd() {}
 
 void MallaRevol::crearMallaRevol( const std::vector<Tupla3f> & perfil_original, const unsigned nperfiles, const bool crear_tapas, const bool cerrar_malla) {
 
-  double ang = cerrar_malla ? 360.0 / (double) nperfiles : 360.0 / (double) nperfiles - 1;
+  nvp = perfil_original.size();
 
-  //Matriz de giro de ángulo ang.
-  Matriz4f giro = MAT_Rotacion(ang, 0, 1, 0);
-
-  vector<Tupla3f> aux = perfil_original;
-  //Insertamos los primeros vértices
-  vertices.insert(vertices.end(), aux.begin(),aux.end());
-  unsigned i,j;
-
-  for( i = 0; i < nperfiles - 1; i++){
-
-    vector<Tupla3f> rotado;
-    //Rotate and save in a 2nd auxiliar vector
-    for(auto vert : aux)
-      rotado.push_back(giro * vert);
-    //Add verts to the MAIN vector
-    vertices.insert(vertices.end(), rotado.begin(), rotado.end());
-    //The auxiliar vector is the rotated one, so we want to rotate the rotated
-    aux = rotado;
-
-    // Add faces
-    for (j = 0; j < nvp - 1; j++) {
-      int k1 = i * nvp + j;
-      int k2 = i * nvp + j + 1;
-      int k3 = (i+1) * nvp + j + 1;
-      int k4 = (i+1) * nvp + j;
-
-      caras.push_back({k4, k2, k3});
-      caras.push_back({k4, k1, k2});
-    }
-  }
+  int nper = cerrar_malla ? nperfiles : nperfiles - 1;
+  double ang = 360.0/ (double)nper;
 
 
-   if (cerrar_malla) {
-    // Añadir caras (i = nper - 1)
-    for (j = 0; j < nvp - 1; j++) {
-      int k1 = i * nvp + j;
-      int k2 = i * nvp + j + 1;
-      int k3 = j + 1; // ((i+1) % nper) * nvp + j + 1
-      int k4 = j; // ((i+1) % nper) * nvp + j
+  // Inicializacion de los vertices
+  for (int i = 0; i < nperfiles; i++)
+    for ( unsigned j = 0; j < nvp; j++)
+      {
+        Matriz4f matriz_giro = MAT_Rotacion((float)i*ang, 0 , 1 , 0);
+        vertices.push_back(matriz_giro*perfil_original[j]);
+      }
 
-      caras.push_back({k4, k2, k3});
-      caras.push_back({k4, k1, k2});
-    }
-  }
+  // Inicializacion de las caras
+   for ( int i = 0; i < nperfiles - 1; i++)
+     for ( unsigned j = 0; j < nvp-1; j++)
+       {
+         caras.push_back({ i*nvp + j, (i+1)*nvp+j+1 , (i+1)*nvp+j});
+         caras.push_back({ i*nvp + j, i*nvp + j+1, (i+1)*nvp + j+1});
+       }
 
-  // Crear tapas
-  if (crear_tapas) {
+   // Si se ha querido cerrar la malla, es necesario crear las ultimas caras.
+   if (cerrar_malla){
+     for (unsigned j = 0; j < nvp-1; j++)
+       {
+         caras.push_back({ (nper - 1)*nvp + j, j+1, j});
+         caras.push_back ({ (nper - 1)*nvp + j, (nper - 1)*nvp + j+1, j+1});
+       }
+   }
+   // Crear tapas
+   if (crear_tapas){
 
-    // Cara inferior
-    auto primer_ver = vertices[0];
-    if (primer_ver(X) != 0) {
-      vertices.push_back({0.0, primer_ver(Y), 0.0});
-      tam_ver++;
 
-      for (i = 0; i + nvp < tam_ver; i += nvp)
-        caras.push_back({i, tam_ver - 1, (i + nvp) % (tam_ver - 1)});
-    }
+     vertices.push_back({0, perfil_original[0][1], 0});
+     vertices.push_back({0, perfil_original[nvp-1][1], 0});
 
-    // Cara superior
-    auto ult_ver = vertices[tam_ver - 2];
-    if (ult_ver(X) != 0) {
-      vertices.push_back({0.0, ult_ver(Y), 0.0});
-      tam_ver++;
+     // Se crean las caras de las tapas.
+     for (int i = 0 ; i < nperfiles - 1; i++ )
+       {
+         caras.push_back( {i*nvp, vertices.size()-2, (i+1)*nvp} );
+         caras.push_back( {(i+1)*nvp - 1, vertices.size()-1, (i+2)*nvp -1} );
+       }
 
-      for (i = nvp - 1; i + nvp < tam_ver; i += nvp)
-        caras.push_back({i, tam_ver - 1, i + nvp});
+     // Si se ha cerrado la malla hay caras adicionales.
+     if (cerrar_malla)
+       {
+       caras.push_back ( { nvp*(nper - 1), vertices.size()-2 , 0 } );
+       caras.push_back ( { nvp*(nper - 1) + nvp - 1, vertices.size()-1, nvp - 1});
+       }
+   }
 
-      // Última cara (i = nper * nvp - 1)
-      caras.push_back({i, tam_ver - 1, nvp - 1});
-    }
-  }
+   tam_ver = vertices.size();
+   tam_tri = caras.size();
+
 
 }
 
@@ -152,12 +134,10 @@ Cilindro::Cilindro(unsigned numVertPerfil, unsigned nPerfiles, float r, float a,
   altura = a;
   vector<Tupla3f> perfilOriginal(numVertPerfil);
 
-  std::cout<< "Creo el cilindro!" << std::endl;
   for(int i = 0; i < numVertPerfil; i++){
     float alturaAct = a * ((float(i)/numVertPerfil-1));
     perfilOriginal[i] = {r, alturaAct , 0.0 };
   }
-  std::cout<< "Voy a revolusionarme" << std::endl;
   inicializarMallaRevol(perfilOriginal,nPerfiles,numVertPerfil, crearTapas,cerrarMalla);
 }
 
@@ -167,7 +147,6 @@ Cono::Cono(unsigned numVertPerfil, unsigned nPerfiles, float r, float a, bool cr
   altura = a;
   vector<Tupla3f> perfilOriginal(numVertPerfil);
 
-  std::cout<< "Creo el cono!" << std::endl;
   for(int i = 0; i < numVertPerfil; i++){
     //Función de un cono
     float x = (1-float(i) / (numVertPerfil-1)) *r;
@@ -181,8 +160,8 @@ Esfera::Esfera(unsigned numVertPerfil,unsigned nPerfiles,float r, bool crearTapa
   radio = r;
   vector<Tupla3f> perfilOriginal(numVertPerfil);
 
-  std::cout<< "Creo la esfera!"<<std::endl;
   for(int i = 0; i < numVertPerfil; i++){
+    //Funcion esfera
     float y = r* (-1 + (float)2*i / (numVertPerfil-1));
     perfilOriginal[i] = {sqrt(r*r-y*y),y,0.0};
   }

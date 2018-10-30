@@ -18,7 +18,7 @@
 using namespace std ;
 
 static unsigned objetoActivo2 = 0 ; // objeto activo: malla ply (0), malla revol (1)
-static constexpr int numObjetos2 = 4 ;
+static constexpr int numObjetos2 = 5 ;
 
 static Objeto3D * objetos2[numObjetos2] = { nullptr, nullptr };
 
@@ -30,9 +30,11 @@ void P2_Inicializar(  )
 {
    cout << "Creando objetos de la práctica 2 .... " << flush ;
    objetos2[0] = new MallaPLY("../plys/beethoven.ply");
-   objetos2[1] = new Cilindro(100,50,1.0,2.0, false,false);
-   objetos2[2] = new Cono(100,50,1.0,2.0,false,false);
+   //Args: numvertPerfil, nperfiles, radio, altura, creartapas,cerrarmalla
+   objetos2[1] = new Cilindro(100,50,1.0,2.0, false,true);
+   objetos2[2] = new Cono(100,50,1.0,2.0,true,true);
    objetos2[3] = new Esfera(100,50,1.0,false,false);
+   objetos2[4] = new MallaRevol("../plys/peon.ply",50,true,true);
    cout << "hecho." << endl << flush ;
 }
 
