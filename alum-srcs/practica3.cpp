@@ -10,23 +10,22 @@
 #include "practicas.hpp"
 #include "practica3.hpp"
 
-
-
 using namespace std ;
 
+
 static bool animaciones = false;
-static int gradoLibertadActivo = ;
-static int numObjetos3 = 1;
+static int gradoLibertadActivo = 0;
+static const int numObjetos3 = 1;
 static int  objetoActivo3 = 0;
-static NodoGrafoEscenaParam * objetos3[numObjetos3] = {nullptr}
+NodoGrafoEscenaParam* objetos3[numObjetos3] = {nullptr};
 
 
 
 void P3_Inicializar(  )
 {
    cout << "Creando objetos de la práctica 3 .... " << flush ;
-   // COMPLETAR: práctica 3: inicialización de objetos de la práctica 3
-   // .................
+  
+   objetos3[objetoActivo3] = new Cuerpo();
 
    cout << "hecho." << endl << flush ;
 }

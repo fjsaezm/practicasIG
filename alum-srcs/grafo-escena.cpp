@@ -1,22 +1,3 @@
-// *********************************************************************
-// **
-// ** Gestión de una grafo de escena (implementación)
-// ** Copyright (C) 2016 Carlos Ureña
-// **
-// ** This program is free software: you can redistribute it and/or modify
-// ** it under the terms of the GNU General Public License as published by
-// ** the Free Software Foundation, either version 3 of the License, or
-// ** (at your option) any later version.
-// **
-// ** This program is distributed in the hope that it will be useful,
-// ** but WITHOUT ANY WARRANTY; without even the implied warranty of
-// ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// ** GNU General Public License for more details.
-// **
-// ** You should have received a copy of the GNU General Public License
-// ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// **
-// *********************************************************************
 
 #include "aux.hpp"
 #include "matrices-tr.hpp"
@@ -81,16 +62,32 @@ EntradaNGE::~EntradaNGE()
 
 void NodoGrafoEscena::visualizarGL( ContextoVis & cv )
 {
-   // COMPLETAR: práctica 3: recorrer las entradas y visualizar el nodo
-   // ........
+  
+  glMatrixMode (GL_MODELVIEW);
+  glPushMatrix ();
+
+  for (unsigned i = 0; i < entradas.size(); i++)
+    switch (entradas[i].tipo) {
+    case TipoEntNGE::objeto:
+      entradas[i].objeto->visualizarGL (cv);
+      break;
+    case TipoEntNGE::transformacion:
+      glMatrixMode (GL_MODELVIEW);
+      glMultMatrixf (*(entradas[i].matriz));
+      break;
+    default:
+      std::cout << "Tipo no conocido" << std::endl;
+    }
+
+  glMatrixMode (GL_MODELVIEW);
+  glPopMatrix();
 
 }
 // -----------------------------------------------------------------------------
 
 NodoGrafoEscena::NodoGrafoEscena()
 {
-   // COMPLETAR: práctica 3: inicializar un nodo vacío (sin entradas)
-   // ........
+  ponerNombre("Nodo escena");
 
 }
 // -----------------------------------------------------------------------------
@@ -108,8 +105,8 @@ void NodoGrafoEscena::fijarColorNodo( const Tupla3f & nuevo_color )
 
 unsigned NodoGrafoEscena::agregar( const EntradaNGE & entrada )
 {
-   // COMPLETAR: práctica 3: agregar la entrada al nodo, devolver índice de la entrada
-   // ........
+  entradas.push_back(entrada);
+  return entradas.size()-1;
 
 }
 // -----------------------------------------------------------------------------
@@ -138,9 +135,9 @@ unsigned NodoGrafoEscena::agregar( Material * pMaterial )
 // devuelve el puntero a la matriz en la i-ésima entrada
 Matriz4f * NodoGrafoEscena::leerPtrMatriz( unsigned indice )
 {
-   // COMPLETAR: práctica 3: devolver puntero la matriz en ese índice
-   //   (debe de dar error y abortar si no hay una matriz en esa entrada)
-   // ........
+  assert(entradas[indice].tipo == TipoEntNGE::transformacion);
+
+  return entradas[indice].matriz;
 
 }
 // -----------------------------------------------------------------------------
@@ -181,8 +178,7 @@ bool NodoGrafoEscena::buscarObjeto
 // devuelve el numero de grados de libertad
 int NodoGrafoEscenaParam::numParametros()
 {
-   // COMPLETAR: práctica 3: indicar cuantos parámetros hay
-   // ........
+  return parametros.size();
 
 }
 // -----------------------------------------------------------------------------
@@ -190,16 +186,22 @@ int NodoGrafoEscenaParam::numParametros()
 // devuelve un puntero al i-ésimo grado de libertad
 Parametro * NodoGrafoEscenaParam::leerPtrParametro( unsigned i )
 {
-   // COMPLETAR: práctica 3: devolver puntero al i-ésimo parámetro
-   // ........
-
+  return &parametros[i];
 }
 // -----------------------------------------------------------------------------
 
 void NodoGrafoEscenaParam::siguienteCuadro()
 {
-   // COMPLETAR: práctica 3: actualizar todos los parámetros al siguiente cuadro
-   // ........
+  for(auto& parametro : parametros)
+    parametro.siguiente_cuadro();
 
+}
 
+Cuerpo::Cuerpo(){
+  Cilindro c(2,20,1.0,5.0,true,true);
+
+  int i_rot_principal = agregar(MAT_Ident());
+  agregar(MAT_Escalado(1,2,1));
+
+  agregar(c);
 }
