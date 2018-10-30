@@ -1,9 +1,4 @@
-// *********************************************************************
-// **
-// ** Informática Gráfica, curso 2018-19
-// ** Práctica 2  (implementación)
-// **
-// *********************************************************************
+
 
 #include "aux.hpp"
 #include "tuplasg.hpp"   // Tupla3f
@@ -14,9 +9,12 @@
 
 using namespace std ;
 
-// COMPLETAR: práctica 3: declarar variables de la práctica 3 (static)
-// .................
+static int objetoActivo3 = 0;
+static const int numObjetos3 = 1;
+static int parametroActivo = 0;
+static bool animaciones = false;
 
+static NodoGrafoEscenaParam* objetos3[numObjetos3] = {nullptr};
 
 
 
@@ -28,8 +26,7 @@ using namespace std ;
 void P3_Inicializar(  )
 {
    cout << "Creando objetos de la práctica 3 .... " << flush ;
-   // COMPLETAR: práctica 3: inicialización de objetos de la práctica 3
-   // .................
+   objetos3[objetoActivo3] = new Cuerpo();
 
    cout << "hecho." << endl << flush ;
 }
@@ -50,39 +47,52 @@ bool P3_FGE_PulsarTeclaCaracter( unsigned char tecla )
    switch ( toupper( tecla ) )
    {
       case 'O' :
-         // COMPLETAR: práctica 3: activar siguiente objeto de la práctica
-         //           (solo en el caso de que se incluyan varios objetos en la práctica)
-         // ....
+        objetoActivo3 = (objetoActivo3+1)%numObjetos3;
+        res = true;
 
          break ;
 
       case 'A' :
-         // COMPLETAR: práctica 3: activar o desactivar animaciones
-         // ....
-
+        animaciones = ! animaciones;
+        if(animaciones)
+          FijarFuncDesocupado(FGE_Desocupado);
+        res = true;
          break ;
 
       case 'G' :
-         // COMPLETAR: práctica 3: activar siguiente parámetro
-         // ....
+        parametroActivo = (++parametroActivo)%(objetos3[objetoActivo3]->numParametros());
 
          break ;
 
       case 'R' :
-         // COMPLETAR: práctica 3: reset de animaciones
-         // ....
+        for (int i = 0; i < objetos3[objetoActivo3]->numParametros(); ++i){
+          objetos3[objetoActivo3]->leerPtrParametro(i)->reset();
+        }
+
+        animaciones = false;
+
+        res = true;
 
          break ;
 
       case '>' :
-         // COMPLETAR: práctica 3: acelerar o incrementar parámetro
-         // ....
+        if(animaciones)
+          objetos3[objetoActivo3]->leerPtrParametro(parametroActivo)->acelerar();
+        else
+          objetos3[objetoActivo3]->leerPtrParametro(parametroActivo)->incrementar();
+
+        res = true;
 
          break ;
 
       case '<' :
-         // COMPLETAR: práctica 3: decelerar o decrementar parámetro
-         // ....
+        if(animaciones)
+          objetos3[objetoActivo3]->leerPtrParametro(parametroActivo)->decelerar();
+        else
+          objetos3[objetoActivo3]->leerPtrParametro(parametroActivo)->decrementar();
+
+        res = true;
+
 
          break ;
       default :
@@ -99,8 +109,7 @@ bool P3_FGE_PulsarTeclaCaracter( unsigned char tecla )
 
 void P3_DibujarObjetos( ContextoVis & cv )
 {
-   // COMPLETAR: práctica 3: visualizar el objeto de la práctica 3
-   // ....
+  objetos3[objetoActivo3]->visualizarGL(cv);
 
 
 }
@@ -109,9 +118,13 @@ void P3_DibujarObjetos( ContextoVis & cv )
 
 bool P3_FGE_Desocupado()
 {
-   // COMPLETAR: práctica 3: si las animaciones están activadas,
-   // actualizar el objeto activo, forzar redibujado, devolver true.
-   // si las animaciones están desactivadas, devolver false.
-   // ....
+ 
+  if (!animaciones)
+    return false;
+
+  objetos3[objetoActivo3]->siguienteCuadro();
+  redibujar_ventana = true;
+
+  return true;
 
 }

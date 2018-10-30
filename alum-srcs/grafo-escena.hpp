@@ -1,22 +1,4 @@
-// *********************************************************************
-// **
-// ** Gestión de una grafo de escena (declaraciones)
-// ** Copyright (C) 2014-2017 Carlos Ureña
-// **
-// ** This program is free software: you can redistribute it and/or modify
-// ** it under the terms of the GNU General Public License as published by
-// ** the Free Software Foundation, either version 3 of the License, or
-// ** (at your option) any later version.
-// **
-// ** This program is distributed in the hope that it will be useful,
-// ** but WITHOUT ANY WARRANTY; without even the implied warranty of
-// ** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// ** GNU General Public License for more details.
-// **
-// ** You should have received a copy of the GNU General Public License
-// ** along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// **
-// *********************************************************************
+
 
 
 #ifndef GRAFO_ESCENA_HPP
@@ -28,6 +10,8 @@
 #include "matrices-tr.hpp"
 #include "materiales.hpp"
 #include "Objeto3D.hpp"
+#include "MallaInd.hpp"
+#include "MallaRevol.hpp"
 
 // *********************************************************************
 // declaración adelantada de estructura para un nodo del grafo de escena
@@ -63,8 +47,7 @@ struct EntradaNGE
 class NodoGrafoEscena : public Objeto3D
 {
    protected:
-   // COMPLETAR: práctica 3: definir variables y métodos privados del nodo
-   // .......
+  std::vector<EntradaNGE> entradas;
 
    public:
 
@@ -106,8 +89,7 @@ class NodoGrafoEscena : public Objeto3D
 class NodoGrafoEscenaParam : public NodoGrafoEscena
 {
    protected:
-      // COMPLETAR: práctica 3: declarar vector de parámetros del nodo 
-      // .......
+  std::vector<Parametro> parametros;
 
 
    public:
@@ -125,3 +107,7 @@ class NodoGrafoEscenaParam : public NodoGrafoEscena
 #endif // GRAFO_ESCENA_HPP
 
 // *********************************************************************
+class Cuerpo : public NodoGrafoEscenaParam{
+public:
+  Cuerpo();
+};
