@@ -202,6 +202,34 @@ void NodoGrafoEscenaParam::siguienteCuadro()
 // My items
 
 Cuerpo::Cuerpo(){
+  Cilindro* c = new Cilindro(100,50,0.1,1, false,true);
+  int prueba1 =agregar( MAT_Traslacion(0,1,0));
 
 
+  agregar(c);
+
+  
+  Matriz4f* ptr_mat = leerPtrMatriz(prueba1);
+  
+  Parametro p1(
+               "Movimientorandom",
+               ptr_mat, //Ptrmatriz
+               [=] (float v) {return MAT_Traslacion(1,1,0);},
+               true, //Acotado
+               30.0, //Valor inicial
+               25.0, //Semiamplitud
+               4.0 //Frecuencia
+               );
+
+  Parametro p2(
+               "Movimientorandom2",
+               ptr_mat, //Ptrmatriz
+               [=] (float v) {return MAT_Traslacion(-1,0,0);},
+               true, //Acotado
+               30.0, //Valor inicial
+               25.0, //Semiamplitud
+               1.0 //Frecuencia
+               );
+    parametros.push_back(p1);
+    parametros.push_back(p2);
 }

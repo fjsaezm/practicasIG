@@ -135,8 +135,7 @@ Cilindro::Cilindro(unsigned numVertPerfil, unsigned nPerfiles, float r, float a,
   vector<Tupla3f> perfilOriginal(numVertPerfil);
 
   for(int i = 0; i < numVertPerfil; i++){
-    float alturaAct = a * ((float(i)/numVertPerfil-1));
-    perfilOriginal[i] = {r, alturaAct , 0.0 };
+    perfilOriginal[i] = {r, a* ((float)i /(numVertPerfil-1)) , 0.0 };
   }
   inicializarMallaRevol(perfilOriginal,nPerfiles,numVertPerfil, crearTapas,cerrarMalla);
 }

@@ -17,6 +17,7 @@
 // declaración adelantada de estructura para un nodo del grafo de escena
 
 class NodoGrafoEscena ;
+class NodoGrafoEscenaParam;
 
 // *********************************************************************
 // tipo enumerado con los tipos de entradas del nodo del grafo de escena

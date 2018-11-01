@@ -18,77 +18,93 @@ Parametro::Parametro(
 )
 
 {
-   // COMPLETAR: práctica 3: inicializar un parámetro
-   // ....
+  descripcion = p_descripcion;
+  ptr_mat = p_ptr_mat;
+  fun_calculo_matriz = p_fun_calculo_matriz;
+  acotado = p_acotado;
+  c = p_c;
+  s = p_s;
+  f = p_f;
+  valor_normal = 0;
+  velocidad = 0;
 
 }
 // -----------------------------------------------------------------------------
 
+
+
 void Parametro::siguiente_cuadro()
 {
-   // COMPLETAR: práctica 3: actualizar el valor y la matriz para el siguiente cuadro
-   // ....
+  valor_normal += velocidad;
+
+  //actualizamos matriz
+  *ptr_mat = fun_calculo_matriz(leer_valor_actual());
 
 }
 // -----------------------------------------------------------------------------
 
 void Parametro::reset()
 {
-   // COMPLETAR: práctica 3: hace reset de valor y velocidad
-   // ....
+  valor_normal = 0;
+  velocidad = 0;
+  //Actualizamos matriz
+  *ptr_mat = fun_calculo_matriz(leer_valor_actual());
 
 }
 // -----------------------------------------------------------------------------
 void Parametro::incrementar()
 {
-   // COMPLETAR: práctica 3: incrementa el valor
-   // ....
+  valor_normal += valor_incremento;
+  //Actualizamos matriz
+  *ptr_mat = fun_calculo_matriz(leer_valor_actual());
 
 }
 // -----------------------------------------------------------------------------
 
 void Parametro::decrementar()
 {
-   // COMPLETAR: práctica 3: decrementa el valor
-   // ....
+  valor_normal -= valor_incremento;
+  //actualizamos matriz
+  *ptr_mat = fun_calculo_matriz(leer_valor_actual());
 
 }
 // -----------------------------------------------------------------------------
 void Parametro::acelerar()
 {
-   // COMPLETAR: práctica 3: incrementa la velocidad
-   // ....
+  velocidad +=valor_incremento_aceleracion;
 
 }
 // -----------------------------------------------------------------------------
 void Parametro::decelerar()
 {
-   // COMPLETAR: práctica 3: decrementa la velocidad
-   // ....
+  velocidad = velocidad - valor_incremento_aceleracion < 0 ? 0 : velocidad - valor_incremento_aceleracion;
 
 }
 // -----------------------------------------------------------------------------
 
 float Parametro::leer_valor_actual()
 {
-   // COMPLETAR: práctica 3: devuelve el valor actual
-   // ....
+  float valor = 0;
+  if(!acotado)
+    valor = c+s*valor_normal;
+  else
+   valor  = c+s*sin(2*M_PI*f*valor_normal);
+
+  return valor;
+
 
 }
 
 // -----------------------------------------------------------------------------
 float Parametro::leer_velocidad_actual()
 {
-   // COMPLETAR: práctica 3: devuelve la velocidad actual
-   // ....
-
+  return velocidad;
 }
 // -----------------------------------------------------------------------------
 
 std::string Parametro::leer_descripcion()
 {
-   // COMPLETAR: práctica 3: devuelve la descripción
-   // ....
+  return descripcion;
 
 }
 // -----------------------------------------------------------------------------

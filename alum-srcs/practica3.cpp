@@ -4,6 +4,7 @@
 #include "tuplasg.hpp"   // Tupla3f
 #include "practicas.hpp"
 #include "practica3.hpp"
+#include "grafo-escena.hpp"
 
 
 
@@ -16,12 +17,6 @@ static bool animaciones = false;
 
 static NodoGrafoEscenaParam* objetos3[numObjetos3] = {nullptr};
 
-
-
-// ---------------------------------------------------------------------
-// Función para implementar en la práctica 1 para inicialización.
-// Se llama una vez al inicio, cuando ya se ha creado la ventana e
-// incializado OpenGL.
 
 void P3_Inicializar(  )
 {
@@ -54,6 +49,7 @@ bool P3_FGE_PulsarTeclaCaracter( unsigned char tecla )
 
       case 'A' :
         animaciones = ! animaciones;
+        cout << "Activo/Desactivo animaciones" << endl;
         if(animaciones)
           FijarFuncDesocupado(FGE_Desocupado);
         res = true;

@@ -16,7 +16,19 @@ typedef std::function< Matriz4f( float )> TFuncionCMF  ;
 class Parametro
 {
    private:
-   // COMPLETAR: práctica 3: definir variables de instancia privadas de un parámetro
+ 
+  std::string descripcion;
+  Matriz4f * ptr_mat;
+  TFuncionCMF fun_calculo_matriz;
+  bool acotado;
+  float c; //valor inicial
+  float s; //Semiamplitud
+  float f; //Frecuencia
+  float valor_normal; //Valor actual normalizado
+  float velocidad; 
+
+  static constexpr float valor_incremento = 0.1;
+  static constexpr float valor_incremento_aceleracion = 0.1;
 
    public:
    // crear grado de libertad no acotado
