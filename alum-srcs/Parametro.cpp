@@ -25,8 +25,8 @@ Parametro::Parametro(
   c = p_c;
   s = p_s;
   f = p_f;
-  valor_normal = 0;
-  velocidad = 0;
+  valor_normal = 0.1;
+  velocidad = 0.1;
 
 }
 // -----------------------------------------------------------------------------

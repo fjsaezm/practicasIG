@@ -202,34 +202,76 @@ void NodoGrafoEscenaParam::siguienteCuadro()
 // My items
 
 Cuerpo::Cuerpo(){
-  Cilindro* c = new Cilindro(100,50,0.1,1, false,true);
-  int prueba1 =agregar( MAT_Traslacion(0,1,0));
+  Cilindro* p1 = new Cilindro(100,25,0.1,1, true,true);
+  Cilindro* body = new Cilindro(100,25,0.35,1,true,true);
+  Cilindro* p2 = new Cilindro(100,25,0.1,1, true,true);
+  Cilindro* a1 = new Cilindro(100,25,0.1,1,true,true);
+  Cilindro* a2 = new Cilindro(100,25,0.1,1,true,true);
+  Cono* cuello = new Cono(100,50,0.35,0.2,true,true);
+  Esfera* c = new Esfera(100,50,0.35,true,true);
+  //  int prueba1 =agregar( MAT_Traslacion(0,1,0));
 
 
+  agregar(p1);
+  agregar(MAT_Traslacion(0.5,0,0));
+  agregar(p2);
+  //Uso el - para centrar el tronco
+  agregar(MAT_Traslacion(-0.25,1,0));
+  agregar(body);
+  //Subo la cabeza
+  agregar(MAT_Traslacion(0,1,0));
+  agregar(cuello);
+  agregar(MAT_Traslacion(0,0.25,0));
   agregar(c);
 
+  //Bajo para los brazos
+  agregar(MAT_Traslacion(0,-0.25,0));
+
+  // Inclinación brazos
   
-  Matriz4f* ptr_mat = leerPtrMatriz(prueba1);
-  
-  Parametro p1(
-               "Movimientorandom",
-               ptr_mat, //Ptrmatriz
-               [=] (float v) {return MAT_Traslacion(1,1,0);},
-               true, //Acotado
-               30.0, //Valor inicial
-               25.0, //Semiamplitud
-               4.0 //Frecuencia
+  int a = agregar(MAT_Rotacion(150,1,0,0));
+  //Brazo de un lado
+  agregar(MAT_Traslacion(-0.35,0,0));
+  agregar(a1);
+  //Brazo del otro lado
+  agregar(MAT_Traslacion(0.7,0,0));
+  agregar(a2);
+
+  Parametro param1(
+               "Rotacion del brazo",
+               leerPtrMatriz(a),
+               [=] (float v) {return MAT_Rotacion(v,1,0,0);},
+               true,
+               150.0,
+               30.0,
+               0.5
                );
+  /*Parametro param2(
+                   "Rotacion del brazo otro sentido",
+                   leerPtrMatriz(a),
+                   [=] (float v) {return MAT_Rotacion(v,0,1,0);},
+                   true,
+                   150.0,
+                   30.0,
+                   0.5
+                   );*/
+  parametros.push_back(param1);
+  // parametros.push_back(param2);
+
+
+  /*
+  Matriz4f* ptr_mat = leerPtrMatriz(prueba1);
+ 
 
   Parametro p2(
                "Movimientorandom2",
                ptr_mat, //Ptrmatriz
                [=] (float v) {return MAT_Traslacion(-1,0,0);},
                true, //Acotado
-               30.0, //Valor inicial
-               25.0, //Semiamplitud
-               1.0 //Frecuencia
+               45.0, //Valor inicial
+               60.0, //Semiamplitud
+               4.0 //Frecuencia
                );
     parametros.push_back(p1);
-    parametros.push_back(p2);
+    parametros.push_back(p2);*/
 }
