@@ -118,5 +118,6 @@ protected:
   int puntMatriz;
 public:
   Brazo();
+  Matriz4f* getMat();
 
 };
