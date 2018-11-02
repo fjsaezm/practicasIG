@@ -108,6 +108,12 @@ class NodoGrafoEscenaParam : public NodoGrafoEscena
 #endif // GRAFO_ESCENA_HPP
 
 // *********************************************************************
+
+class Escena : public NodoGrafoEscenaParam{
+public:
+  Escena();
+};
+
 class Cuerpo : public NodoGrafoEscenaParam{
 public:
   Cuerpo();
@@ -128,4 +134,21 @@ protected:
 public:
   Cabeza();
   Matriz4f* getMat();
+};
+
+class Bateria : public NodoGrafoEscenaParam{
+public:
+  Bateria();
+};
+
+class Tambor : public NodoGrafoEscenaParam{
+ public:
+  Tambor(float altura);
+};
+
+class Platillo : public NodoGrafoEscenaParam{
+ protected:
+  int puntMatriz;
+ public:
+  Platillo();
 };

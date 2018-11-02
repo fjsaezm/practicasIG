@@ -201,6 +201,9 @@ void NodoGrafoEscenaParam::siguienteCuadro()
 
 // My items
 
+
+
+
 Cuerpo::Cuerpo(){
   Cilindro* p1 = new Cilindro(100,25,0.1,1, true,true);
   Cilindro* body = new Cilindro(100,50,0.35,1,true,true);
@@ -208,6 +211,10 @@ Cuerpo::Cuerpo(){
   Cabeza* cabeza = new Cabeza();
   Brazo* a1 = new Brazo();
   Brazo* a2 = new Brazo();
+  Bateria* b = new Bateria();
+  agregar(MAT_Traslacion(0,0,1));
+  agregar(b);
+  agregar(MAT_Traslacion(0,0,-1));
 
   agregar(p1);
   agregar(MAT_Traslacion(0.5,0,0));
@@ -267,6 +274,10 @@ Cuerpo::Cuerpo(){
   parametros.push_back(param1);
   parametros.push_back(param2);
   parametros.push_back(param3);
+
+  //--------------------------------------- Batería
+
+
 }
 
 // BRAZOS----------------------------------------
@@ -304,16 +315,16 @@ Matriz4f* Cabeza::getMat(){
 
 // BATERIA ---------------------------------------
 Bateria::Bateria(){
-  Tambor* t = new Tambor();
+  Tambor* t = new Tambor(0.3);
 
   agregar(t);
 }
 
 
 // TAMBOR --------------------------------------
-Tambor::Tambor(){
-  Cilindro* base = new Cilindro(100,25,0,8,1,true,true);
-  Cilindro* tambor = new Cilindro(100,25,1,0.3,true,true);
+Tambor::Tambor(float altura){
+  Cilindro* base = new Cilindro(100,25,0.8,1,true,true);
+  Cilindro* tambor = new Cilindro(100,25,1,altura,true,true);
 
   agregar(base);
   agregar(MAT_Rotacion(90,1,0,0));
