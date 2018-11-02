@@ -112,3 +112,11 @@ class Cuerpo : public NodoGrafoEscenaParam{
 public:
   Cuerpo();
 };
+
+class Brazo : public NodoGrafoEscenaParam{
+protected:
+  int puntMatriz;
+public:
+  Brazo();
+
+};
