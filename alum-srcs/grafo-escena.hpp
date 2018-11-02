@@ -121,3 +121,11 @@ public:
   Matriz4f* getMat();
 
 };
+
+class Cabeza : public NodoGrafoEscenaParam{
+protected:
+  int puntMatriz;
+public:
+  Cabeza();
+  Matriz4f* getMat();
+};

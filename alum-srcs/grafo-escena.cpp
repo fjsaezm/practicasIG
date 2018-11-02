@@ -203,10 +203,9 @@ void NodoGrafoEscenaParam::siguienteCuadro()
 
 Cuerpo::Cuerpo(){
   Cilindro* p1 = new Cilindro(100,25,0.1,1, true,true);
-  Cilindro* body = new Cilindro(100,25,0.35,1,true,true);
+  Cilindro* body = new Cilindro(100,50,0.35,1,true,true);
   Cilindro* p2 = new Cilindro(100,25,0.1,1, true,true);
-  Cono* cuello = new Cono(100,50,0.35,0.2,true,true);
-  Esfera* c = new Esfera(100,50,0.35,true,true);
+  Cabeza* cabeza = new Cabeza();
   Brazo* a1 = new Brazo();
   Brazo* a2 = new Brazo();
 
@@ -214,20 +213,20 @@ Cuerpo::Cuerpo(){
   agregar(MAT_Traslacion(0.5,0,0));
   agregar(p2);
   //Uso el - para centrar el tronco
+
   agregar(MAT_Traslacion(-0.25,1,0));
   agregar(body);
+
   //Subo la cabeza
   agregar(MAT_Traslacion(0,1,0));
-  agregar(cuello);
-  agregar(MAT_Traslacion(0,0.25,0));
-  agregar(c);
+
+  agregar(cabeza);
 
   //Bajo para los brazos
-  agregar(MAT_Traslacion(0,-0.25,0));
+  // agregar(MAT_Traslacion(0,-0.25,0));
 
   // Inclinación brazos
   agregar(MAT_Rotacion(150,1,0,0));
-  int a = agregar(MAT_Ident());
   //Brazo de un lado
   agregar(MAT_Traslacion(-0.35,0,0));
   agregar(a1);
@@ -236,7 +235,7 @@ Cuerpo::Cuerpo(){
   agregar(a2);
 
   Parametro param1(
-               "Rotacion del brazo",
+               "Rotacion vertical brazo",
                a1->getMat(),
                [=] (float v) {return MAT_Rotacion(v,1,0,0);},
                true,
@@ -247,25 +246,39 @@ Cuerpo::Cuerpo(){
  
 
   Parametro param2(
-               "Movimientorandom2",
+               "Rotación lateral brazo",
                a2->getMat(), //Ptrmatriz
-               [=] (float v) {return MAT_Rotacion(v,0,1,1);},
+               [=] (float v) {return MAT_Rotacion(v,0,0,1);},
                true, //Acotado
                20.0, //Valor inicial
-               15.0, //Semiamplitud
+               15, //Semiamplitud
                0.5 //Frecuencia
                );
 
+  Parametro param3(
+                   "Movimiento Vertical cabeza",
+                   cabeza->getMat(), //Ptrmatriz
+                   [=] (float v) {return MAT_Rotacion(v,1,0,0);},
+                   true, //Acotado
+                   20.0, //Valor inicial
+                   40, //Semiamplitud
+                   0.2 //Frecuencia
+                   );
   parametros.push_back(param1);
-    parametros.push_back(param2);
+  parametros.push_back(param2);
+  parametros.push_back(param3);
 }
 
 // BRAZOS----------------------------------------
 Brazo::Brazo(){
   Cilindro* a1 = new Cilindro(100,25,0.1,1.25,true,true);
+  Cilindro* b1 = new Cilindro(100,25,0.02,0.5,true,true);
  
   puntMatriz = agregar(MAT_Ident());
   agregar(a1);
+  agregar(MAT_Traslacion(0,1.25,0));
+  agregar(MAT_Rotacion(280,1,0,0));
+  agregar(b1);
 }
 
 Matriz4f* Brazo::getMat(){
@@ -275,7 +288,7 @@ Matriz4f* Brazo::getMat(){
 // CABEZA -------------------------------------------
 
 Cabeza::Cabeza(){
-  Cono* cuello = new Cono(100,50,0.35,0.2,true,true);
+  Cono* cuello = new Cono(100,50,0.1,0.2,true,true);
   Esfera* cabeza = new Esfera(100,50,0.35,true,true);
 
   puntMatriz = agregar(MAT_Ident());
@@ -283,3 +296,29 @@ Cabeza::Cabeza(){
   agregar(MAT_Traslacion(0,0.25,0));
   agregar(cabeza);
 }
+
+Matriz4f* Cabeza::getMat(){
+  return leerPtrMatriz(puntMatriz);
+}
+
+
+// BATERIA ---------------------------------------
+Bateria::Bateria(){
+  Tambor* t = new Tambor();
+
+  agregar(t);
+}
+
+
+// TAMBOR --------------------------------------
+Tambor::Tambor(){
+  Cilindro* base = new Cilindro(100,25,0,8,1,true,true);
+  Cilindro* tambor = new Cilindro(100,25,1,0.3,true,true);
+
+  agregar(base);
+  agregar(MAT_Rotacion(90,1,0,0));
+  agregar(tambor);
+}
+
+// PLATILLO ------------------------------------------
+
