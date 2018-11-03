@@ -109,10 +109,6 @@ class NodoGrafoEscenaParam : public NodoGrafoEscena
 
 // *********************************************************************
 
-class Escena : public NodoGrafoEscenaParam{
-public:
-  Escena();
-};
 
 class Cuerpo : public NodoGrafoEscenaParam{
 public:
@@ -136,9 +132,22 @@ public:
   Matriz4f* getMat();
 };
 
+class Pierna : public NodoGrafoEscenaParam{
+protected:
+  int puntMatriz;
+public:
+  Pierna();
+  Matriz4f* getMat();
+};
+
 class Bateria : public NodoGrafoEscenaParam{
+protected:
+  Matriz4f* puntMatrizPlatillo;
 public:
   Bateria();
+  Matriz4f* getMatrizPlatillo();
+
+
 };
 
 class Tambor : public NodoGrafoEscenaParam{
@@ -148,7 +157,16 @@ class Tambor : public NodoGrafoEscenaParam{
 
 class Platillo : public NodoGrafoEscenaParam{
  protected:
-  int puntMatriz;
+  Matriz4f* matrizMetal;
  public:
-  Platillo();
+  Platillo(float altura);
+  Matriz4f* getPuntMatriz();
+};
+
+class MetalCono : public NodoGrafoEscenaParam{
+protected:
+  int puntMatriz;
+public:
+  MetalCono();
+  Matriz4f* getPuntMatriz();
 };

@@ -205,23 +205,25 @@ void NodoGrafoEscenaParam::siguienteCuadro()
 
 
 Cuerpo::Cuerpo(){
-  Cilindro* p1 = new Cilindro(100,25,0.1,1, true,true);
   Cilindro* body = new Cilindro(100,50,0.35,1,true,true);
-  Cilindro* p2 = new Cilindro(100,25,0.1,1, true,true);
+  Pierna* p1 = new Pierna();
+  Pierna* p2 = new Pierna();
   Cabeza* cabeza = new Cabeza();
   Brazo* a1 = new Brazo();
   Brazo* a2 = new Brazo();
   Bateria* b = new Bateria();
   agregar(MAT_Traslacion(0,0,1));
   agregar(b);
-  agregar(MAT_Traslacion(0,0,-1));
+  agregar(MAT_Traslacion(0,1,-1));
 
+  agregar(MAT_Rotacion(180,1,0,0));
   agregar(p1);
   agregar(MAT_Traslacion(0.5,0,0));
   agregar(p2);
+  agregar(MAT_Rotacion(180,1,0,0));
   //Uso el - para centrar el tronco
 
-  agregar(MAT_Traslacion(-0.25,1,0));
+  agregar(MAT_Traslacion(-0.25,0,0));
   agregar(body);
 
   //Subo la cabeza
@@ -271,11 +273,40 @@ Cuerpo::Cuerpo(){
                    40, //Semiamplitud
                    0.2 //Frecuencia
                    );
+  Parametro param4(
+                   "Movimiento Vertical Platillo",
+                   b->getMatrizPlatillo(), //Ptrmatriz
+                   [=] (float v) {return MAT_Rotacion(v,1,0,0);},
+                   true, //Acotado
+                   20.0, //Valor inicial
+                   10, //Semiamplitud
+                   0.4 //Frecuencia
+                   );
+  Parametro param5(
+                   "Movimiento Pierna 1",
+                   p1->getMat(), //Ptrmatriz
+                   [=] (float v) {return MAT_Rotacion(v,0,1,1);},
+                   true, //Acotado
+                   20.0, //Valor inicial
+                   10.0, //Semiamplitud
+                   0.4 //Frecuencia
+                   );
+  Parametro param6(
+                   "Movimiento Pierna 2",
+                   p2->getMat(), //Ptrmatriz
+                   [=] (float v) {return MAT_Rotacion(v,1,1,1);},
+                   true, //Acotado
+                   -20.0, //Valor inicial
+                   -10.0, //Semiamplitud
+                   0.4 //Frecuencia
+                   );
   parametros.push_back(param1);
   parametros.push_back(param2);
   parametros.push_back(param3);
+  parametros.push_back(param4);
+  parametros.push_back(param5);
+  parametros.push_back(param6);
 
-  //--------------------------------------- Batería
 
 
 }
@@ -312,24 +343,73 @@ Matriz4f* Cabeza::getMat(){
   return leerPtrMatriz(puntMatriz);
 }
 
+// PIERNA ------------------------------------
+Pierna::Pierna(){
+  Cilindro* c = new Cilindro(100,25,0.1,1, true,true);
+  puntMatriz = agregar(MAT_Ident());
+
+  agregar(c);
+}
+
+Matriz4f* Pierna::getMat(){
+  return leerPtrMatriz(puntMatriz);
+}
+
 
 // BATERIA ---------------------------------------
 Bateria::Bateria(){
-  Tambor* t = new Tambor(0.3);
+  //Float altura
+  Tambor* t = new Tambor(0.5);
+  Platillo* p = new Platillo(1);
 
+  puntMatrizPlatillo = p->getPuntMatriz();
   agregar(t);
+  agregar(MAT_Traslacion(0.5,0,0));
+  agregar(p);
 }
+
+Matriz4f* Bateria::getMatrizPlatillo(){
+  return puntMatrizPlatillo;
+}
+
 
 
 // TAMBOR --------------------------------------
 Tambor::Tambor(float altura){
-  Cilindro* base = new Cilindro(100,25,0.8,1,true,true);
-  Cilindro* tambor = new Cilindro(100,25,1,altura,true,true);
+  Cilindro* base = new Cilindro(100,25,0.02,altura,true,true);
+  Cilindro* tambor = new Cilindro(100,25,0.4,0.3,true,true);
+
 
   agregar(base);
-  agregar(MAT_Rotacion(90,1,0,0));
+  agregar(MAT_Traslacion(0,altura,0));
+  agregar(MAT_Escalado(1,1.5,1));
   agregar(tambor);
 }
 
 // PLATILLO ------------------------------------------
+
+Platillo::Platillo(float altura){
+  Cilindro* base = new Cilindro(100,25,0.02,altura,false,true);
+  MetalCono* plat = new MetalCono();
+
+  matrizMetal = plat->getPuntMatriz();
+
+  agregar(base);
+  agregar(MAT_Traslacion(0,altura,0));
+  agregar(plat);
+}
+
+Matriz4f* Platillo::getPuntMatriz(){
+  return matrizMetal;
+}
+
+MetalCono::MetalCono(){
+  Cono* c = new Cono(100,25,0.3,0.3,true,true);
+  puntMatriz = agregar(MAT_Ident());
+  agregar(c);
+}
+
+Matriz4f* MetalCono::getPuntMatriz(){
+  return leerPtrMatriz(puntMatriz);
+}
 
