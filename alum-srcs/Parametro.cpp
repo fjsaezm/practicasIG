@@ -16,21 +16,23 @@ Parametro::Parametro(
    float                p_s,
    float                p_f
 )
+  :descripcion(p_descripcion),
+   ptr_mat(p_ptr_mat),
+   fun_calculo_matriz(p_fun_calculo_matriz),
+   acotado(p_acotado),
+   c(p_c),
+   s(p_s),
+   f(p_f)
 
 {
-  descripcion = p_descripcion;
-  ptr_mat = p_ptr_mat;
-  fun_calculo_matriz = p_fun_calculo_matriz;
-  acotado = p_acotado;
-  c = p_c;
-  s = p_s;
-  f = p_f;
-  valor_normal = 0.1;
   velocidad = 0.1;
-
+  valor_normal = 0.0;
 }
 // -----------------------------------------------------------------------------
 
+void Parametro::actualizar_matriz(){
+  *ptr_mat = fun_calculo_matriz(leer_valor_actual());
+}
 
 
 void Parametro::siguiente_cuadro()
@@ -38,17 +40,17 @@ void Parametro::siguiente_cuadro()
   valor_normal += velocidad;
 
   //actualizamos matriz
-  *ptr_mat = fun_calculo_matriz(leer_valor_actual());
+  actualizar_matriz();
 
 }
 // -----------------------------------------------------------------------------
 
 void Parametro::reset()
 {
-  valor_normal = 0;
-  velocidad = 0;
+  valor_normal = 0.0;
+  velocidad = 0.1;
   //Actualizamos matriz
-  *ptr_mat = fun_calculo_matriz(leer_valor_actual());
+  actualizar_matriz();
 
 }
 // -----------------------------------------------------------------------------
@@ -56,7 +58,7 @@ void Parametro::incrementar()
 {
   valor_normal += valor_incremento;
   //Actualizamos matriz
-  *ptr_mat = fun_calculo_matriz(leer_valor_actual());
+  actualizar_matriz();
 
 }
 // -----------------------------------------------------------------------------
@@ -65,7 +67,7 @@ void Parametro::decrementar()
 {
   valor_normal -= valor_incremento;
   //actualizamos matriz
-  *ptr_mat = fun_calculo_matriz(leer_valor_actual());
+  actualizar_matriz();
 
 }
 // -----------------------------------------------------------------------------
@@ -77,7 +79,8 @@ void Parametro::acelerar()
 // -----------------------------------------------------------------------------
 void Parametro::decelerar()
 {
-  velocidad = velocidad - valor_incremento_aceleracion < 0 ? 0 : velocidad - valor_incremento_aceleracion;
+  velocidad -= valor_incremento_aceleracion;
+  if(velocidad < 0.0) velocidad = 0.0;
 
 }
 // -----------------------------------------------------------------------------

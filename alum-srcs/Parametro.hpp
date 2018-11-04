@@ -52,6 +52,7 @@ class Parametro
    float leer_velocidad_actual();    // devuelve velocidad o frecuencia actual
    std::string
          leer_descripcion();
+  void actualizar_matriz();
 };
 
 #endif
